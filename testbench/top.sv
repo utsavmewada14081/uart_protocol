@@ -1,10 +1,8 @@
 `include "uvm_macros.svh"
  import uvm_pkg::*;
 
-/////////////build the seq for random length with and without priority
-
-////////////////////////////////////////////////////////////////////////////////////
-class uart_config extends uvm_object; /////configuration of env
+//config
+class uart_config extends uvm_object;
   `uvm_object_utils(uart_config)
   
   function new(string name = "uart_config");
@@ -15,7 +13,6 @@ class uart_config extends uvm_object; /////configuration of env
   
 endclass
 
-//////////////////////////////////////////////////////////
 
 typedef enum bit [3:0]   {rand_baud_1_stop = 0, rand_length_1_stop = 1, length5wp = 2, length6wp = 3, length7wp = 4, length8wp = 5, length5wop = 6, length6wop = 7, length7wop = 8, length8wop = 9,rand_baud_2_stop = 11, rand_length_2_stop = 12} oper_mode;
 
@@ -24,15 +21,15 @@ class transaction extends uvm_sequence_item;
   `uvm_object_utils(transaction)
   
     rand oper_mode   op;
-         logic tx_start, rx_start;
-         logic rst;
+    logic tx_start, rx_start;
+    logic rst;
     rand logic [7:0] tx_data;
     rand logic [16:0] baud;
     rand logic [3:0] length; 
     rand logic parity_type, parity_en;
-         logic stop2;
-         logic tx_done, rx_done, tx_err, rx_err;
-         logic [7:0] rx_out;
+    logic stop2;
+    logic tx_done, rx_done, tx_err, rx_err;
+    logic [7:0] rx_out;
   
 
   
@@ -43,13 +40,10 @@ class transaction extends uvm_sequence_item;
     super.new(name);
   endfunction
 
-endclass : transaction
+endclass
 
 
-///////////////////////////////////////////////////////////////////////
-
-
-///////////////////random baud - fixed length = 8 - parity enable - parity type : random - single stop
+//random baud - fixed length = 8 - parity enable - parity type : random - single stop
 class rand_baud extends uvm_sequence#(transaction);
   `uvm_object_utils(rand_baud)
   
@@ -76,11 +70,10 @@ class rand_baud extends uvm_sequence#(transaction);
         finish_item(tr);
       end
   endtask
-  
-
 endclass
-////////////////////random baud - fixed length = 8 - parity enable - parity type : random - two stop
-//////////////////////////////////////////////////////////
+
+
+//random baud - fixed length = 8 - parity enable - parity type : random - two stop
 class rand_baud_with_stop extends uvm_sequence#(transaction);
   `uvm_object_utils(rand_baud_with_stop)
   
@@ -106,12 +99,9 @@ class rand_baud_with_stop extends uvm_sequence#(transaction);
         finish_item(tr);
       end
   endtask
-  
-
 endclass
 
-//////////////////////////////////////////////////////////
-////////////////////fixed length = 5 - variable baud - with parity
+//fixed length = 5 - variable baud - with parity
 class rand_baud_len5p extends uvm_sequence#(transaction);
   `uvm_object_utils(rand_baud_len5p)
   
@@ -138,14 +128,10 @@ class rand_baud_len5p extends uvm_sequence#(transaction);
         finish_item(tr);
       end
   endtask
-  
-
 endclass
 
 
-
-//////////////////////////////////////////////////////////
-////////////////////fixed length = 6 - variable baud - with parity
+//fixed length = 6 - variable baud - with parity
 class rand_baud_len6p extends uvm_sequence#(transaction);
   `uvm_object_utils(rand_baud_len6p)
   
@@ -176,8 +162,7 @@ class rand_baud_len6p extends uvm_sequence#(transaction);
 
 endclass
 
-//////////////////////////////////////////////////////////
-////////////////////fixed length = 7 - variable baud - with parity
+//fixed length = 7 - variable baud - with parity
 class rand_baud_len7p extends uvm_sequence#(transaction);
   `uvm_object_utils(rand_baud_len7p)
   
@@ -208,8 +193,8 @@ class rand_baud_len7p extends uvm_sequence#(transaction);
 
 endclass
 
-//////////////////////////////////////////////////////////
-////////////////////fixed length = 8 - variable baud - with parity
+
+//fixed length = 8 - variable baud - with parity
 class rand_baud_len8p extends uvm_sequence#(transaction);
   `uvm_object_utils(rand_baud_len8p)
   
@@ -240,8 +225,8 @@ class rand_baud_len8p extends uvm_sequence#(transaction);
 
 endclass
 
-//////////////////////////////////////////////////////////
-////////////////////fixed length = 5 - variable baud - without parity
+
+//fixed length = 5 - variable baud - without parity
 class rand_baud_len5 extends uvm_sequence#(transaction);
   `uvm_object_utils(rand_baud_len5)
   
@@ -273,8 +258,7 @@ class rand_baud_len5 extends uvm_sequence#(transaction);
 endclass
 
 
-//////////////////////////////////////////////////////////
-////////////////////fixed length = 6- variable baud - without parity
+//fixed length = 6- variable baud - without parity
 class rand_baud_len6 extends uvm_sequence#(transaction);
   `uvm_object_utils(rand_baud_len6)
   
@@ -305,8 +289,9 @@ class rand_baud_len6 extends uvm_sequence#(transaction);
 
 endclass
 
-//////////////////////////////////////////////////////////
-////////////////////fixed length = 7- variable baud - without parity
+
+
+//fixed length = 7- variable baud - without parity
 class rand_baud_len7 extends uvm_sequence#(transaction);
   `uvm_object_utils(rand_baud_len7)
   
@@ -338,8 +323,8 @@ class rand_baud_len7 extends uvm_sequence#(transaction);
 endclass
 
 
-//////////////////////////////////////////////////////////
-////////////////////fixed length = 8 - variable baud - without parity
+
+//fixed length = 8 - variable baud - without parity
 class rand_baud_len8 extends uvm_sequence#(transaction);
   `uvm_object_utils(rand_baud_len8)
   
@@ -370,11 +355,7 @@ class rand_baud_len8 extends uvm_sequence#(transaction);
 
 endclass
 
-///////////////////////////////////////////////////////////////////////////////////////
-
-
-
-
+//driver
 class driver extends uvm_driver #(transaction);
   `uvm_component_utils(driver)
   
@@ -449,8 +430,7 @@ class driver extends uvm_driver #(transaction);
   
 endclass
 
-//////////////////////////////////////////////////////////////////////////////////////////////
-
+//monitor
 class mon extends uvm_monitor;
 `uvm_component_utils(mon)
 
@@ -466,7 +446,7 @@ virtual uart_if vif;
     super.build_phase(phase);
     tr = transaction::type_id::create("tr");
     send = new("send", this);
-      if(!uvm_config_db#(virtual uart_if)::get(this,"","vif",vif))//uvm_test_top.env.agent.drv.aif
+      if(!uvm_config_db#(virtual uart_if)::get(this,"","vif",vif))
         `uvm_error("MON","Unable to access Interface");
     endfunction
     
@@ -498,14 +478,13 @@ virtual uart_if vif;
            `uvm_info("MON", $sformatf("BAUD:%0d LEN:%0d PAR_T:%0d PAR_EN:%0d STOP:%0d TX_DATA:%0d RX_DATA:%0d", tr.baud, tr.length, tr.parity_type, tr.parity_en, tr.stop2, tr.tx_data, tr.rx_out), UVM_NONE);
           send.write(tr);
          end
-    
-    
     end
    endtask 
 
 endclass
-//////////////////////////////////////////////////////////////////////////////////////////////////
 
+
+//scoreboard
 class sco extends uvm_scoreboard;
 `uvm_component_utils(sco)
 
@@ -514,8 +493,6 @@ class sco extends uvm_scoreboard;
   bit [31:0] addr    = 0;
   bit [31:0] data_rd = 0;
  
-
-
     function new(input string inst = "sco", uvm_component parent = null);
     super.new(inst,parent);
     endfunction
@@ -540,9 +517,8 @@ class sco extends uvm_scoreboard;
 endclass
 
 
-//////////////////////////////////////////////////////////////////////////////////////////////
                   
-                  
+//agent                  
 class agent extends uvm_agent;
 `uvm_component_utils(agent)
   
@@ -567,8 +543,6 @@ super.build_phase(phase);
    d = driver::type_id::create("d",this);
    seqr = uvm_sequencer#(transaction)::type_id::create("seqr", this);
    end
-  
-  
 endfunction
 
 virtual function void connect_phase(uvm_phase phase);
@@ -580,8 +554,9 @@ endfunction
 
 endclass
 
-//////////////////////////////////////////////////////////////////////////////////
 
+
+//environment
 class env extends uvm_env;
 `uvm_component_utils(env)
 
@@ -605,8 +580,9 @@ endfunction
 
 endclass
 
-//////////////////////////////////////////////////////////////////////////
 
+
+//test
 class test extends uvm_test;
 `uvm_component_utils(test)
 
@@ -622,7 +598,6 @@ rand_baud_len5p  rb5l;
 rand_baud_len6p rb6l;
 rand_baud_len7p rb7l;
 rand_baud_len8p rb8l;
-  ///////////////////////
   
   rand_baud_len5  rb5lwop;
   rand_baud_len6  rb6lwop;
@@ -635,13 +610,14 @@ super.build_phase(phase);
    e       = env::type_id::create("env",this);
    rb      = rand_baud::type_id::create("rb");
    rbs     = rand_baud_with_stop::type_id::create("rbs");
-  /////////////fixed length var baud with parity
+ 
+  //fixed length var baud with parity
    rb5l    = rand_baud_len5p::type_id::create("rb5l");
    rb6l    = rand_baud_len6p::type_id::create("rb6l");
    rb7l    = rand_baud_len7p::type_id::create("rb7l");
    rb8l    = rand_baud_len8p::type_id::create("rb8l");
   
-  ///////////////fixed len var baud without parity
+  //fixed len var baud without parity
   rb5lwop = rand_baud_len5::type_id::create("rb5lwop");
   rb6lwop = rand_baud_len6::type_id::create("rb6lwop");
   rb7lwop = rand_baud_len7::type_id::create("rb7lwop");
@@ -658,14 +634,13 @@ phase.drop_objection(this);
 endtask
 endclass
 
-//////////////////////////////////////////////////////////////////////
-module tb;
-  
-  
-  uart_if vif();
-  
 
-  
+
+
+
+
+module tb;  
+  uart_if vif();
   
   uart_top dut (.clk(vif.clk), .rst(vif.rst), .tx_start(vif.tx_start), .rx_start(vif.rx_start), .tx_data(vif.tx_data), .baud(vif.baud), .length(vif.length), .parity_type(vif.parity_type), .parity_en(vif.parity_en),.stop2(vif.stop2),.tx_done(vif.tx_done), .rx_done(vif.rx_done), .tx_err(vif.tx_err), .rx_err(vif.rx_err), .rx_out(vif.rx_out));
   
@@ -674,15 +649,11 @@ module tb;
   end
 
   always #10 vif.clk <= ~vif.clk;
-
-  
   
   initial begin
     uvm_config_db#(virtual uart_if)::set(null, "*", "vif", vif);
     run_test("test");
    end
-  
-  
   initial begin
     $dumpfile("dump.vcd");
     $dumpvars;
